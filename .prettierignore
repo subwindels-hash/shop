@@ -1,0 +1,14 @@
+.cache
+.arena
+.git
+.local
+.npm
+.config
+uploads
+node_modules
+.next
+dist
+coverage
+playwright-report
+test-results
+pnpm-lock.yaml

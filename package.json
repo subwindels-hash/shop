@@ -1,25 +1,33 @@
 {
-  "name": "@windels/api",
+  "name": "windels-marketplace-community",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc --project tsconfig.json",
-    "dev": "tsx watch src/server.ts",
-    "start": "node dist/server.js",
-    "test": "vitest run --passWithNoTests",
-    "typecheck": "tsc --project tsconfig.json --noEmit"
+  "packageManager": "pnpm@10.13.1",
+  "engines": {
+    "node": ">=20.20.0 <23",
+    "pnpm": ">=10.13.1 <11"
   },
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "zod": "^4.4.3"
+  "scripts": {
+    "build": "corepack pnpm --filter @windels/api build && corepack pnpm --filter @windels/web build",
+    "clean": "rm -rf apps/api/dist apps/web/.next",
+    "dev": "concurrently --kill-others-on-fail --names api,web --prefix-colors blue,magenta \"corepack pnpm --filter @windels/api dev\" \"corepack pnpm --filter @windels/web dev\"",
+    "dev:api": "corepack pnpm --filter @windels/api dev",
+    "dev:infra": "docker compose up -d postgres redis mailpit",
+    "dev:infra:down": "docker compose down",
+    "dev:web": "corepack pnpm --filter @windels/web dev",
+    "format": "prettier --write --ignore-unknown README.md CONTRIBUTING.md SESSION_TRACKER.md .env.example .editorconfig .dockerignore .gitignore .prettierignore .prettierrc.json docker-compose.yml eslint.config.mjs package.json pnpm-workspace.yaml tsconfig.base.json .github apps docs infra",
+    "format:check": "prettier --check --ignore-unknown README.md CONTRIBUTING.md SESSION_TRACKER.md .env.example .editorconfig .dockerignore .gitignore .prettierignore .prettierrc.json docker-compose.yml eslint.config.mjs package.json pnpm-workspace.yaml tsconfig.base.json .github apps docs infra",
+    "lint": "eslint --max-warnings=0 \"apps/**/*.{ts,tsx}\"",
+    "test": "corepack pnpm --filter @windels/api test && corepack pnpm --filter @windels/web test",
+    "typecheck": "corepack pnpm --filter @windels/api typecheck && corepack pnpm --filter @windels/web typecheck",
+    "verify": "corepack pnpm format:check && corepack pnpm lint && corepack pnpm typecheck && corepack pnpm test && corepack pnpm build"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^25.5.0",
-    "tsx": "^4.23.1",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.10"
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^9.2.1",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.2",
+    "typescript-eslint": "^8.57.0"
   }
 }
